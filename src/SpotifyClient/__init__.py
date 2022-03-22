@@ -36,4 +36,3 @@ class Client:
                 "Authorization": f"Bearer {self.auth_token}",
             },
         )
-
