@@ -5,7 +5,7 @@ from SpotifyClient.endpoints import (
     url_get_track,
     url_get_several_tracks,
     url_audio_features_for_track,
-    url_audio_features_several_tracks
+    url_audio_features_several_tracks,
 )
 from SpotifyClient.harmony import Tonality
 import urllib
@@ -34,8 +34,7 @@ class Track:
         if self.audio_features is not None and inplace:
             self.audio_features = audio_features
             self.tonality = Tonality(
-                key=audio_features["key"],
-                mode=audio_features["mode"]
+                key=audio_features["key"], mode=audio_features["mode"]
             )
         return audio_features
 
@@ -80,5 +79,5 @@ class Track:
             id=api_data["id"],
             name=api_data["name"],
             artists=[a["name"] for a in api_data["artists"]],
-            api_data=api_data
+            api_data=api_data,
         )

@@ -38,7 +38,8 @@ class Tonality:
     def __repr__(self):
         return (
             f"{self.__class__.__name__}"
-            f"(key={self.key}, mode={self.mode}, tone='{self.key_signature}')"
+            f"(key={self.key}, mode={self.mode}, "
+            f"tone='{self.key_signature}')"
         )
 
 
