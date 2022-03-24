@@ -1,5 +1,3 @@
-# from SpotifyClient.Track import Track
-from typing import Sequence, Tuple
 from dataclasses import dataclass
 
 KEYS = ("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")
@@ -36,6 +34,12 @@ class Tonality:
         new_key = key + offset
         new_mode = 0 if mode == 1 else 1
         return new_key, new_mode
+
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__}"
+            f"(key={self.key}, mode={self.mode}, tone='{self.key_signature}')"
+        )
 
 
 def chromatic_chords(mode):

@@ -1,7 +1,13 @@
 from dataclasses import dataclass, field
 from SpotifyClient import Client
 from typing import Sequence, Dict
-from SpotifyClient.endpoints import url_get_track, url_get_several_tracks
+from SpotifyClient.endpoints import (
+    url_get_track,
+    url_get_several_tracks,
+    url_audio_features_for_track,
+    url_audio_features_several_tracks
+)
+from SpotifyClient.harmony import Tonality
 import urllib
 
 
@@ -10,6 +16,8 @@ class Track:
     id: str
     name: str = None
     artists: Sequence[str] = field(default_factory=list)
+    tonality: Tonality = Tonality(key=-1, mode=1)
+    audio_features: Dict = field(default_factory=dict)
     api_data: Dict = field(default_factory=dict, repr=False)
     client: Client = None
 
@@ -18,6 +26,18 @@ class Track:
         if not self.api_data:
             return f"spotify:track:{self.id}"
         return self.api_data["uri"]
+
+    def get_audio_features(self, inplace: bool = True):
+        assert self.client is not None, "No client defined"
+        url = url_audio_features_for_track + self.id
+        audio_features = self.client.get_json_response(url)
+        if self.audio_features is not None and inplace:
+            self.audio_features = audio_features
+            self.tonality = Tonality(
+                key=audio_features["key"],
+                mode=audio_features["mode"]
+            )
+        return audio_features
 
     @staticmethod
     def _get_track_information(track_id: str, client: Client) -> Dict:
@@ -45,7 +65,7 @@ class Track:
         url = f"{url_get_several_tracks}?{query_str}"
         tracks_data = client.get_json_response(url)
         return [
-            Track(
+            cls(
                 id=data["id"],
                 name=data["name"],
                 artists=[a["name"] for a in data["artists"]],
@@ -53,3 +73,12 @@ class Track:
             )
             for data in tracks_data["tracks"]
         ]
+
+    @classmethod
+    def from_spotify_track_object(cls, api_data: Dict):
+        return cls(
+            id=api_data["id"],
+            name=api_data["name"],
+            artists=[a["name"] for a in api_data["artists"]],
+            api_data=api_data
+        )

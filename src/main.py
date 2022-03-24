@@ -21,10 +21,10 @@ if __name__ == "__main__":
     auth_token = get_env_variable(ENV_TOKEN)
     client = Client(auth_token=auth_token)
     ref_track_id = "6w8yBI2vthyN9UnwO4UBWb"
-    ref_track = Track(ref_track_id)
+    ref_track = Track.from_track_id(ref_track_id, client)
     harmonic_playlist = HarmonicPlaylist(client=client, reference_track=ref_track)
-    data = harmonic_playlist.get_song_recommendations()
-
+    harmonic_playlist.get_song_recommendations()
+    # print(f"Data of size {len(data['tracks'])}")
 
 # if __name__ == "__main__":
 #     logging.getLogger().setLevel(logging.DEBUG)
