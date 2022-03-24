@@ -13,13 +13,13 @@ class HarmonicPlaylist:
     reference_track: Track
     tracks: Sequence[Track] = field(default_factory=list)
 
-    def get_song_recommendations(self, limit: int = 100) ->  None:
+    def get_song_recommendations(self, limit: int = 100) -> None:
         query_params = {
             "seed_tracks": self.reference_track.id,
             "limit": limit,
         }
         data = self._get_recommendations(query_params)
-        data = self._filter_by_key(key=1, mode=0)
+        # data = self._filter_by_key(key=1, mode=0)
 
     def _get_recommendations(self, query_params):
         query_str = urllib.parse.urlencode(query_params)

@@ -7,7 +7,10 @@ import logging
 ENV_TOKEN = "SPOTIFY_AUTH_TOKEN"
 
 
-os.environ["SPOTIFY_AUTH_TOKEN"] = "BQAnFv_OZRyNCWXGVti0NcsBjEIOS1ER9P7cL-JOwNaIgFI_HksdbM-1cwQd3JLKEZZo7ACB11CgrAZPaocu24rO26MHHeEZtq_Gmtwl3lulniM63kuDZb1p7TtyCdUKQiQp9X-f9QL8j6RcarVyKy52PK_LXcwn2lSKKJ3Ije3pyjRbxY9sBzG8gn0wRoBBZu5tzv4Tq6uft8xZAd4JBsa5L5wpKWWItYZwNnyiNqim0QRUO2xAxdy8R6b1fBKLfj0-wBvlwMMFXLordkgysQ"
+os.environ[
+    "SPOTIFY_AUTH_TOKEN"
+] = "BQAnFv_OZRyNCWXGVti0NcsBjEIOS1ER9P7cL-JOwNaIgFI_HksdbM-1cwQd3JLKEZZo7ACB11CgrAZPaocu24rO26MHHeEZtq_Gmtwl3lulniM63kuDZb1p7TtyCdUKQiQp9X-f9QL8j6RcarVyKy52PK_LXcwn2lSKKJ3Ije3pyjRbxY9sBzG8gn0wRoBBZu5tzv4Tq6uft8xZAd4JBsa5L5wpKWWItYZwNnyiNqim0QRUO2xAxdy8R6b1fBKLfj0-wBvlwMMFXLordkgysQ"
+
 
 def get_env_variable(env_var):
     try:
@@ -30,4 +33,3 @@ if __name__ == "__main__":
         client=client,
     )
     pl = HarmonicPlaylist(client=client, reference_track=t1)
-
