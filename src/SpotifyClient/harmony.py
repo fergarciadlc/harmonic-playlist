@@ -7,17 +7,17 @@ MODE_MAP = {0: "m", 1: ""}  # 0: minor, 1: major
 
 @dataclass
 class Tonality:
-    mode: int
+    mode: int = None
     key: int = -1
-    key_signature: str = ""
 
-    def __post_init__(self):
-        if self.key == -1:
-            self.key_signature = "n/a"
-        self.key_signature = KEYS[self.key] + MODE_MAP[self.mode]
+    @property
+    def key_signature(self):
+        if self.key == -1 or self.mode is None:
+            return None
+        return KEYS[self.key] + MODE_MAP[self.mode]
 
     def relative_key(self):
-        if self.key == -1:
+        if self.key == -1 or self.mode is None:
             raise ValueError("No key defined")
         new_key, new_mode = self.key_converter(key=self.key, mode=self.mode)
         return self._from_new_key(key=new_key, mode=new_mode)
@@ -35,6 +35,13 @@ class Tonality:
         new_mode = 0 if mode == 1 else 1
         return new_key, new_mode
 
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__}"
+            f"(key={self.key}, mode={self.mode}, "
+            f"tone='{self.key_signature}')"
+        )
+
 
 def chromatic_chords(mode):
     return [Tonality(key=n, mode=mode) for n in range(12)]
@@ -46,6 +53,7 @@ if __name__ == "__main__":
     g = Tonality(key=7, mode=1)
     a = Tonality(key=9, mode=1)
     b = Tonality(key=11, mode=1)
+    x = Tonality(key=-1, mode=1)
     print(c)
 
     major_chords = chromatic_chords(mode=1)

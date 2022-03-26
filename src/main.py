@@ -22,8 +22,8 @@ if __name__ == "__main__":
     client = Client(auth_token=auth_token)
     ref_track_id = "6w8yBI2vthyN9UnwO4UBWb"
     ref_track = Track.from_track_id(ref_track_id, client)
-    harmonic_playlist = HarmonicPlaylist(client=client, reference_track=ref_track)
-    harmonic_playlist.get_song_recommendations()
+    hp = HarmonicPlaylist(client=client, reference_track=ref_track)
+    # hp.get_song_recommendations()
     # print(f"Data of size {len(data['tracks'])}")
 
 # if __name__ == "__main__":

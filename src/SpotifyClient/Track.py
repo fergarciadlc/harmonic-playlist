@@ -16,7 +16,7 @@ class Track:
     id: str
     name: str = None
     artists: Sequence[str] = field(default_factory=list)
-    tonality: Tonality = Tonality(key=-1, mode=1)
+    tonality: Tonality = None
     audio_features: Dict = field(default_factory=dict)
     api_data: Dict = field(default_factory=dict, repr=False)
     client: Client = None
