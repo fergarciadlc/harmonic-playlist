@@ -9,12 +9,12 @@ MODE_MAP = {0: "m", 1: ""}  # 0: minor, 1: major
 class Tonality:
     mode: int
     key: int = -1
+    key_signature: str = ""
 
-    @property
-    def key_signature(self) -> str:
+    def __post_init__(self):
         if self.key == -1:
-            return "n/a"
-        return KEYS[self.key] + MODE_MAP[self.mode]
+            self.key_signature = "n/a"
+        self.key_signature = KEYS[self.key] + MODE_MAP[self.mode]
 
     def relative_key(self):
         if self.key == -1:
@@ -35,20 +35,9 @@ class Tonality:
         new_mode = 0 if mode == 1 else 1
         return new_key, new_mode
 
-    def __repr__(self):
-        return (
-            f"{self.__class__.__name__}"
-            f"(key={self.key}, mode={self.mode}, "
-            f"tone='{self.key_signature}')"
-        )
-
 
 def chromatic_chords(mode):
     return [Tonality(key=n, mode=mode) for n in range(12)]
-
-
-# def filter_by_tonality(tracks: Sequence[Track], target: Tuple) -> Sequence[Track]:
-#     pass
 
 
 if __name__ == "__main__":
