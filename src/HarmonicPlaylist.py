@@ -43,7 +43,7 @@ class HarmonicPlaylist:
         if not self.reference_track.tonality:
             self.reference_track.get_audio_features()
         assert (
-                self.reference_track.tonality.key_signature is not None
+            self.reference_track.tonality.key_signature is not None
         ), f"No tone available for this track :( {self.reference_track}"
 
         if kind == "natural":
@@ -76,7 +76,7 @@ class HarmonicPlaylist:
         tracks_with_audio_features = []
         for track, audio_f in zip(tracks, audio_features["audio_features"]):
             assert (
-                    track.id == audio_f["id"]
+                track.id == audio_f["id"]
             ), f"No match id track and audio features: {track}"
             track.audio_features = audio_f
             track.tonality = Tonality(mode=audio_f["mode"], key=audio_f["key"])
@@ -89,24 +89,34 @@ class HarmonicPlaylist:
             if not track.tonality:
                 raise ValueError(f"No tonality for track {track}")
             if track.tonality not in (
-                    self.reference_track.tonality,
-                    self.reference_track.tonality.relative_key(),
+                self.reference_track.tonality,
+                self.reference_track.tonality.relative_key(),
             ):
                 logging.debug(f"Ignoring track: {track}")
                 continue
             filtered_tracks.append(track)
         return filtered_tracks
 
+    def preview(self):
+        preview_string = []
+        for n, track in enumerate(self.tracks):
+            n = str(n)
+            preview_string.append(
+                f"{n.zfill(2)}. [{track.tonality.key_signature}] --> {track.name} by {track.artists}"
+            )
+        return "\n".join(preview_string)
+
     def to_dataframe(self):
         import pandas as pd
         from SpotifyClient.Track import TARGET_AUDIO_FEATURES
+
         data = []
         for track in self.tracks:
             tr = {
                 "name": track.name,
                 "artists": track.artists,
                 "id": track.id,
-                "tone": track.tonality.key_signature,
+                "key_signature": track.tonality.key_signature,
             }
             for feature in TARGET_AUDIO_FEATURES:
                 tr[feature] = track.audio_features[feature]

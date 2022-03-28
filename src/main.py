@@ -27,6 +27,9 @@ if __name__ == "__main__":
     # print(f"Data of size {len(data['tracks'])}")
     hp.generate(hard_filter=True)
     df = hp.to_dataframe()
+    print("Preview:")
+    print(hp.preview())
+
 
 # if __name__ == "__main__":
 #     logging.getLogger().setLevel(logging.DEBUG)
