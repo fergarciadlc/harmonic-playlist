@@ -2,7 +2,10 @@ import logging
 import urllib
 from SpotifyClient.Track import Track
 from SpotifyClient import Client
-from SpotifyClient.endpoints import url_recommendations, url_audio_features_several_tracks
+from SpotifyClient.endpoints import (
+    url_recommendations,
+    url_audio_features_several_tracks,
+)
 from SpotifyClient.harmony import Tonality
 from dataclasses import dataclass, field
 from typing import List
@@ -23,15 +26,18 @@ class HarmonicPlaylist:
         for d in data["tracks"]:
             self.tracks.append(Track.from_spotify_track_object(d))
 
-    def generate(self):
+    def generate(self, hard_filter: bool = True):
         # TODO: Refactor this
         natural_tracks = self._get_recommendations_by_tone(kind="natural")
         natural_tracks = self._batch_audio_features_for_tracks(natural_tracks)
-        natural_tracks = self._filter_by_tone_or_relative(natural_tracks)
         relative_tracks = self._get_recommendations_by_tone(kind="relative")
         relative_tracks = self._batch_audio_features_for_tracks(relative_tracks)
-        relative_tracks = self._filter_by_tone_or_relative(relative_tracks)
+
+        if hard_filter:
+            natural_tracks = self._filter_by_tone_or_relative(natural_tracks)
+            relative_tracks = self._filter_by_tone_or_relative(relative_tracks)
         self.tracks = self.tracks + natural_tracks + relative_tracks
+        self.tracks.insert(0, self.reference_track)
 
     def _get_recommendations_by_tone(self, kind="natural", limit: int = 100):
         if not self.reference_track.tonality:
@@ -69,12 +75,11 @@ class HarmonicPlaylist:
         audio_features = self.client.get_json_response(url)
         tracks_with_audio_features = []
         for track, audio_f in zip(tracks, audio_features["audio_features"]):
-            assert track.id == audio_f["id"], f"No match id track and audio features: {track}"
+            assert (
+                    track.id == audio_f["id"]
+            ), f"No match id track and audio features: {track}"
             track.audio_features = audio_f
-            track.tonality = Tonality(
-                mode=audio_f["mode"],
-                key=audio_f["key"]
-            )
+            track.tonality = Tonality(mode=audio_f["mode"], key=audio_f["key"])
             tracks_with_audio_features.append(track)
         return tracks_with_audio_features
 
@@ -83,8 +88,27 @@ class HarmonicPlaylist:
         for track in tracks:
             if not track.tonality:
                 raise ValueError(f"No tonality for track {track}")
-            if track.tonality not in (self.reference_track.tonality, self.reference_track.tonality.relative_key()):
+            if track.tonality not in (
+                    self.reference_track.tonality,
+                    self.reference_track.tonality.relative_key(),
+            ):
                 logging.debug(f"Ignoring track: {track}")
                 continue
             filtered_tracks.append(track)
         return filtered_tracks
+
+    def to_dataframe(self):
+        import pandas as pd
+        from SpotifyClient.Track import TARGET_AUDIO_FEATURES
+        data = []
+        for track in self.tracks:
+            tr = {
+                "name": track.name,
+                "artists": track.artists,
+                "id": track.id,
+                "tone": track.tonality.key_signature,
+            }
+            for feature in TARGET_AUDIO_FEATURES:
+                tr[feature] = track.audio_features[feature]
+            data.append(tr)
+        return pd.DataFrame(data)

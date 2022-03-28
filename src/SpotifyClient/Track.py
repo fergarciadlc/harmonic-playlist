@@ -10,6 +10,20 @@ from SpotifyClient.endpoints import (
 from SpotifyClient.harmony import Tonality
 import urllib
 
+TARGET_AUDIO_FEATURES = [
+    "acousticness",
+    "danceability",
+    "duration_ms",
+    "energy",
+    "instrumentalness",
+    "key",
+    "liveness",
+    "loudness",
+    "mode",
+    "speechiness",
+    "tempo",
+    "time_signature",
+]
 
 
 @dataclass

@@ -39,7 +39,7 @@ class Tonality:
         return (
             f"{self.__class__.__name__}"
             f"(key={self.key}, mode={self.mode}, "
-            f"tone='{self.key_signature}')"
+            f"key_signature='{self.key_signature}')"
         )
 
 
