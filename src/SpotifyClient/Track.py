@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from SpotifyClient import Client
-from typing import Sequence, Dict
+from typing import Sequence, Dict, List
 from SpotifyClient.endpoints import (
     url_get_track,
     url_get_several_tracks,
@@ -9,6 +9,7 @@ from SpotifyClient.endpoints import (
 )
 from SpotifyClient.harmony import Tonality
 import urllib
+
 
 
 @dataclass

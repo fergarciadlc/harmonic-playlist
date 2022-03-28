@@ -25,6 +25,7 @@ if __name__ == "__main__":
     hp = HarmonicPlaylist(client=client, reference_track=ref_track)
     # hp.get_song_recommendations()
     # print(f"Data of size {len(data['tracks'])}")
+    hp.generate()
 
 # if __name__ == "__main__":
 #     logging.getLogger().setLevel(logging.DEBUG)
