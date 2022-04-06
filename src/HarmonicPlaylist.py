@@ -1,10 +1,12 @@
 import logging
 import urllib
 from SpotifyClient.Track import Track
+from SpotifyClient.User import User
 from SpotifyClient import Client
 from SpotifyClient.endpoints import (
     url_recommendations,
     url_audio_features_several_tracks,
+    url_create_playlist,
 )
 from SpotifyClient.harmony import Tonality
 from dataclasses import dataclass, field
@@ -39,8 +41,36 @@ class HarmonicPlaylist:
         self.tracks = self.tracks + natural_tracks + relative_tracks
         self.tracks.insert(0, self.reference_track)
 
-    def _cregate_playlist(self):
+    def populate_playlist(self):
         pass
+
+    def _create_playlist(
+        self,
+        user: User,
+        name: str = "",
+        public: bool = True,
+        collaborative: bool = False,
+        description: str = "Harmonic playlist to match tonality",
+    ):
+        default_name = f"Harmonic Playlist: {self.reference_track.name}"
+        logging.info("Creating new playlist")
+        if not name:
+            name = input(
+                f"Enter playlist name,"
+                f" press enter to use default name: '{default_name}'"
+                ">"
+            )
+        playlist_name = name if name else default_name
+        logging.info(f"Playlist name: '{playlist_name}")
+        self.client.post_json_request(
+            url=url_create_playlist.format(user_id=user.id),
+            json_body={
+                "name": playlist_name,
+                "public": public,
+                "collaborative": collaborative,
+                "description": description,
+            },
+        )
 
     def _get_recommendations_by_tone(self, kind="natural", limit: int = 100):
         if not self.reference_track.tonality:
