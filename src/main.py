@@ -30,9 +30,9 @@ if __name__ == "__main__":
     df = hp.to_dataframe()
     print("Preview:")
     print(hp.preview())
-
     user = User.from_api_data(client.get_json_request("https://api.spotify.com/v1/me"))
 
+    hp.export_playlist(user)
 
 # if __name__ == "__main__":
 #     logging.getLogger().setLevel(logging.DEBUG)

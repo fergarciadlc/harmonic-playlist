@@ -7,6 +7,7 @@ from SpotifyClient.endpoints import (
     url_recommendations,
     url_audio_features_several_tracks,
     url_create_playlist,
+    url_add_items_to_playlist
 )
 from SpotifyClient.harmony import Tonality
 from dataclasses import dataclass, field
@@ -41,8 +42,18 @@ class HarmonicPlaylist:
         self.tracks = self.tracks + natural_tracks + relative_tracks
         self.tracks.insert(0, self.reference_track)
 
-    def populate_playlist(self):
-        pass
+    def export_playlist(self, user: User):
+        playlist_id = self._create_playlist(user)
+        self._add_tracks_to_playlist(playlist_id=playlist_id)
+        logging.info(f"{len(self.tracks)} tracks exported to playlist")
+
+    def _add_tracks_to_playlist(self, playlist_id: str, position: int = 0):
+        url = url_add_items_to_playlist.format(playlist_id=playlist_id)
+        json_body = {
+            "position": position,
+            "uris": [track.uri for track in self.tracks]
+        }
+        self.client.post_json_request(url=url, json_body=json_body)
 
     def _create_playlist(
         self,
@@ -51,7 +62,7 @@ class HarmonicPlaylist:
         public: bool = True,
         collaborative: bool = False,
         description: str = "Harmonic playlist to match tonality",
-    ):
+    ) -> str:
         default_name = f"Harmonic Playlist: {self.reference_track.name}"
         logging.info("Creating new playlist")
         if not name:
@@ -62,7 +73,7 @@ class HarmonicPlaylist:
             )
         playlist_name = name if name else default_name
         logging.info(f"Playlist name: '{playlist_name}")
-        self.client.post_json_request(
+        data = self.client.post_json_request(
             url=url_create_playlist.format(user_id=user.id),
             json_body={
                 "name": playlist_name,
@@ -71,6 +82,8 @@ class HarmonicPlaylist:
                 "description": description,
             },
         )
+        logging.debug(data)
+        return data["id"]
 
     def _get_recommendations_by_tone(self, kind="natural", limit: int = 100):
         if not self.reference_track.tonality:
