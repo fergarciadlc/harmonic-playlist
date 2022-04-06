@@ -39,6 +39,9 @@ class HarmonicPlaylist:
         self.tracks = self.tracks + natural_tracks + relative_tracks
         self.tracks.insert(0, self.reference_track)
 
+    def _cregate_playlist(self):
+        pass
+
     def _get_recommendations_by_tone(self, kind="natural", limit: int = 100):
         if not self.reference_track.tonality:
             self.reference_track.get_audio_features()
@@ -100,9 +103,8 @@ class HarmonicPlaylist:
     def preview(self):
         preview_string = []
         for n, track in enumerate(self.tracks):
-            n = str(n)
             preview_string.append(
-                f"{n.zfill(2)}. [{track.tonality.key_signature}] --> {track.name} by {track.artists}"
+                f"{str(n).zfill(2)}. [{track.tonality.key_signature}] --> {track.name} by {track.artists}"
             )
         return "\n".join(preview_string)
 
