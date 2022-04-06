@@ -34,8 +34,6 @@ if __name__ == "__main__":
     user = User.from_api_data(client.get_json_request("https://api.spotify.com/v1/me"))
 
 
-
-
 # if __name__ == "__main__":
 #     logging.getLogger().setLevel(logging.DEBUG)
 #     main()
