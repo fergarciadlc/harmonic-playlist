@@ -6,8 +6,8 @@ class Client:
     def __init__(self, auth_token):
         self.auth_token = auth_token
 
-    # def export_playlist(self):
-    #     pass
+    def post_api_request(self, json_body: dict):
+        pass
 
     def get_json_response(self, url):
         r = self._get_api_request(url)
