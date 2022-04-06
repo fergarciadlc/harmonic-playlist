@@ -67,7 +67,7 @@ class HarmonicPlaylist:
     def _get_api_recommendations(self, query_params):
         query_str = urllib.parse.urlencode(query_params)
         url = f"{url_recommendations}?{query_str}"
-        data = self.client.get_json_response(url)
+        data = self.client.get_json_request(url)
         logging.debug(f"Tracks retrieved from API: {len(data['tracks'])}")
         return data
 
@@ -75,7 +75,7 @@ class HarmonicPlaylist:
         ids = [track.id for track in tracks]
         ids = urllib.parse.urlencode({"ids": ",".join(ids)})
         url = f"{url_audio_features_several_tracks}?{ids}"
-        audio_features = self.client.get_json_response(url)
+        audio_features = self.client.get_json_request(url)
         tracks_with_audio_features = []
         for track, audio_f in zip(tracks, audio_features["audio_features"]):
             assert (

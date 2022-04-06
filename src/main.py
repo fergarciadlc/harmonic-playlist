@@ -31,7 +31,7 @@ if __name__ == "__main__":
     print("Preview:")
     print(hp.preview())
 
-    user = User.from_api_data(client.get_json_response("https://api.spotify.com/v1/me"))
+    user = User.from_api_data(client.get_json_request("https://api.spotify.com/v1/me"))
 
 
 

@@ -45,7 +45,7 @@ class Track:
     def get_audio_features(self, inplace: bool = True):
         assert self.client is not None, "No client defined"
         url = url_audio_features_for_track + self.id
-        audio_features = self.client.get_json_response(url)
+        audio_features = self.client.get_json_request(url)
         if self.audio_features is not None and inplace:
             self.audio_features = audio_features
             self.tonality = Tonality(
@@ -56,7 +56,7 @@ class Track:
     @staticmethod
     def _get_track_information(track_id: str, client: Client) -> Dict:
         url = url_get_track + track_id
-        track_data = client.get_json_response(url)
+        track_data = client.get_json_request(url)
         return track_data
 
     @classmethod
@@ -77,7 +77,7 @@ class Track:
         query_params = {"ids": ",".join(track_ids)}
         query_str = urllib.parse.urlencode(query_params)
         url = f"{url_get_several_tracks}?{query_str}"
-        tracks_data = client.get_json_response(url)
+        tracks_data = client.get_json_request(url)
         return [
             cls(
                 id=data["id"],

@@ -6,10 +6,10 @@ class Client:
     def __init__(self, auth_token):
         self.auth_token = auth_token
 
-    def post_api_request(self, json_body: dict):
+    def post_json_request(self, json_body: dict):
         pass
 
-    def get_json_response(self, url):
+    def get_json_request(self, url):
         r = self._get_api_request(url)
         request_data = r.json()
         assert r.status_code == 200, f"Bad request: {request_data}"
