@@ -7,7 +7,7 @@ from SpotifyClient.endpoints import (
     url_recommendations,
     url_audio_features_several_tracks,
     url_create_playlist,
-    url_add_items_to_playlist
+    url_add_items_to_playlist,
 )
 from SpotifyClient.harmony import Tonality
 from dataclasses import dataclass, field
@@ -43,16 +43,19 @@ class HarmonicPlaylist:
         self.tracks.insert(0, self.reference_track)
 
     def export_playlist(self, user: User):
-        playlist_id = self._create_playlist(user)
+        playlist_id = self._create_playlist(
+            user=user,
+            description=(
+                "Harmonic playlist for " 
+                f"{self.reference_track.name} by {self.reference_track.artists}"
+            ),
+        )
         self._add_tracks_to_playlist(playlist_id=playlist_id)
         logging.info(f"{len(self.tracks)} tracks exported to playlist")
 
     def _add_tracks_to_playlist(self, playlist_id: str, position: int = 0):
         url = url_add_items_to_playlist.format(playlist_id=playlist_id)
-        json_body = {
-            "position": position,
-            "uris": [track.uri for track in self.tracks]
-        }
+        json_body = {"position": position, "uris": [track.uri for track in self.tracks]}
         self.client.post_json_request(url=url, json_body=json_body)
 
     def _create_playlist(
