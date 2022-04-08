@@ -46,7 +46,7 @@ class HarmonicPlaylist:
         playlist_id = self._create_playlist(
             user=user,
             description=(
-                "Harmonic playlist for " 
+                "Harmonic playlist for "
                 f"{self.reference_track.name} by {self.reference_track.artists} "
                 f"in {self.reference_track.tonality.key_signature}"
             ),

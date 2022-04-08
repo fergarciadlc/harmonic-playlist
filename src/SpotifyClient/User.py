@@ -14,5 +14,5 @@ class User:
             id=data["id"],
             display_name=data["display_name"],
             email=data["email"],
-            uri=data["uri"]
+            uri=data["uri"],
         )
