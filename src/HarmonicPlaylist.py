@@ -11,7 +11,7 @@ from SpotifyClient.endpoints import (
 )
 from SpotifyClient.harmony import Tonality
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Dict
 
 
 @dataclass
@@ -20,7 +20,7 @@ class HarmonicPlaylist:
     reference_track: Track
     tracks: List[Track] = field(default_factory=list)
 
-    def get_song_recommendations(self, limit: int = 100):
+    def get_song_recommendations(self, limit: int = 100) -> None:
         query_params = {
             "seed_tracks": self.reference_track.id,
             "limit": limit,
@@ -29,7 +29,7 @@ class HarmonicPlaylist:
         for d in data["tracks"]:
             self.tracks.append(Track.from_spotify_track_object(d))
 
-    def generate(self, hard_filter: bool = True):
+    def generate(self, hard_filter: bool = True) -> None:
         # TODO: Refactor this
         natural_tracks = self._get_recommendations_by_tone(kind="natural")
         natural_tracks = self._batch_audio_features_for_tracks(natural_tracks)
@@ -42,7 +42,7 @@ class HarmonicPlaylist:
         self.tracks = self.tracks + natural_tracks + relative_tracks
         self.tracks.insert(0, self.reference_track)
 
-    def export_playlist(self, user: User):
+    def export_playlist(self, user: User) -> None:
         playlist_id = self._create_playlist(
             user=user,
             description=(
@@ -54,7 +54,7 @@ class HarmonicPlaylist:
         self._add_tracks_to_playlist(playlist_id=playlist_id)
         logging.info(f"{len(self.tracks)} tracks exported to playlist")
 
-    def _add_tracks_to_playlist(self, playlist_id: str, position: int = 0):
+    def _add_tracks_to_playlist(self, playlist_id: str, position: int = 0) -> None:
         url = url_add_items_to_playlist.format(playlist_id=playlist_id)
         json_body = {"position": position, "uris": [track.uri for track in self.tracks]}
         self.client.post_json_request(url=url, json_body=json_body)
@@ -89,17 +89,21 @@ class HarmonicPlaylist:
         logging.debug(data)
         return data["id"]
 
-    def _get_recommendations_by_tone(self, kind="natural", limit: int = 100):
+    def _get_recommendations_by_tone(
+        self, kind: str = "natural", limit: int = 100
+    ) -> List[Track]:
         if not self.reference_track.tonality:
             self.reference_track.get_audio_features()
         assert (
             self.reference_track.tonality.key_signature is not None
         ), f"No tone available for this track :( {self.reference_track}"
 
-        if kind == "natural":
-            tone = self.reference_track.tonality
-        elif kind == "relative":
-            tone = self.reference_track.tonality.relative_key()
+        tone_by_kind = {
+            "natural": self.reference_track.tonality,
+            "relative": self.reference_track.tonality.relative_key(),
+        }
+
+        tone = tone_by_kind[kind]
 
         query_params = {
             "seed_tracks": self.reference_track.id,
@@ -111,14 +115,14 @@ class HarmonicPlaylist:
         tracks = [Track.from_spotify_track_object(d) for d in data["tracks"]]
         return tracks
 
-    def _get_api_recommendations(self, query_params):
+    def _get_api_recommendations(self, query_params: Dict) -> Dict:
         query_str = urllib.parse.urlencode(query_params)
         url = f"{url_recommendations}?{query_str}"
         data = self.client.get_json_request(url)
         logging.debug(f"Tracks retrieved from API: {len(data['tracks'])}")
         return data
 
-    def _batch_audio_features_for_tracks(self, tracks: List[Track]):
+    def _batch_audio_features_for_tracks(self, tracks: List[Track]) -> List[Track]:
         ids = [track.id for track in tracks]
         ids = urllib.parse.urlencode({"ids": ",".join(ids)})
         url = f"{url_audio_features_several_tracks}?{ids}"
@@ -133,7 +137,7 @@ class HarmonicPlaylist:
             tracks_with_audio_features.append(track)
         return tracks_with_audio_features
 
-    def _filter_by_tone_or_relative(self, tracks: List[Track]):
+    def _filter_by_tone_or_relative(self, tracks: List[Track]) -> List[Track]:
         filtered_tracks = []
         for track in tracks:
             if not track.tonality:
@@ -147,7 +151,7 @@ class HarmonicPlaylist:
             filtered_tracks.append(track)
         return filtered_tracks
 
-    def preview(self):
+    def preview(self) -> str:
         preview_string = []
         for n, track in enumerate(self.tracks):
             preview_string.append(

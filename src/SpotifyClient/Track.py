@@ -1,14 +1,15 @@
 from dataclasses import dataclass, field
 from SpotifyClient import Client
-from typing import Sequence, Dict, List
+from typing import List, Dict, TypeVar
 from SpotifyClient.endpoints import (
     url_get_track,
     url_get_several_tracks,
     url_audio_features_for_track,
-    url_audio_features_several_tracks,
 )
 from SpotifyClient.harmony import Tonality
 import urllib
+
+T = TypeVar("T", bound="parent")
 
 TARGET_AUDIO_FEATURES = [
     "acousticness",
@@ -30,7 +31,7 @@ TARGET_AUDIO_FEATURES = [
 class Track:
     id: str
     name: str = None
-    artists: Sequence[str] = field(default_factory=list)
+    artists: List[str] = field(default_factory=list)
     tonality: Tonality = None
     audio_features: Dict = field(default_factory=dict)
     api_data: Dict = field(default_factory=dict, repr=False)
@@ -42,7 +43,7 @@ class Track:
             return f"spotify:track:{self.id}"
         return self.api_data["uri"]
 
-    def get_audio_features(self, inplace: bool = True):
+    def get_audio_features(self, inplace: bool = True) -> Dict:
         assert self.client is not None, "No client defined"
         url = url_audio_features_for_track + self.id
         audio_features = self.client.get_json_request(url)
@@ -60,7 +61,7 @@ class Track:
         return track_data
 
     @classmethod
-    def from_track_id(cls, track_id: str, client: Client) -> "Track":
+    def from_track_id(cls, track_id: str, client: Client) -> T:
         track_data = cls._get_track_information(track_id=track_id, client=client)
         return cls(
             id=track_data["id"],
@@ -71,9 +72,7 @@ class Track:
         )
 
     @classmethod
-    def from_list_of_ids(
-        cls, track_ids: Sequence[str], client: Client
-    ) -> Sequence["Track"]:
+    def from_list_of_ids(cls, track_ids: List[str], client: Client) -> List[T]:
         query_params = {"ids": ",".join(track_ids)}
         query_str = urllib.parse.urlencode(query_params)
         url = f"{url_get_several_tracks}?{query_str}"
@@ -89,7 +88,7 @@ class Track:
         ]
 
     @classmethod
-    def from_spotify_track_object(cls, api_data: Dict):
+    def from_spotify_track_object(cls, api_data: Dict) -> T:
         return cls(
             id=api_data["id"],
             name=api_data["name"],

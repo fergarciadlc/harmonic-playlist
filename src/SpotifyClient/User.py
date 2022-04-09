@@ -1,4 +1,7 @@
 from dataclasses import dataclass
+from typing import TypeVar
+
+T = TypeVar("T", bound="parent")
 
 
 @dataclass(frozen=True)
@@ -9,7 +12,7 @@ class User:
     uri: str
 
     @classmethod
-    def from_api_data(cls, data: dict):
+    def from_api_data(cls, data: dict) -> T:
         return cls(
             id=data["id"],
             display_name=data["display_name"],

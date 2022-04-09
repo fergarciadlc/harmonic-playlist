@@ -1,4 +1,7 @@
 from dataclasses import dataclass
+from typing import Optional, TypeVar, Tuple, List
+
+T = TypeVar("T", bound="parent")
 
 KEYS = ("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")
 MODES = (0, 1)
@@ -11,23 +14,23 @@ class Tonality:
     key: int = -1
 
     @property
-    def key_signature(self):
+    def key_signature(self) -> Optional[str]:
         if self.key == -1 or self.mode is None:
             return None
         return KEYS[self.key] + MODE_MAP[self.mode]
 
-    def relative_key(self):
+    def relative_key(self) -> "Tonality":
         if self.key == -1 or self.mode is None:
             raise ValueError("No key defined")
         new_key, new_mode = self.key_converter(key=self.key, mode=self.mode)
         return self._from_new_key(key=new_key, mode=new_mode)
 
     @classmethod
-    def _from_new_key(cls, key: int, mode: int):
+    def _from_new_key(cls, key: int, mode: int) -> T:
         return cls(key=key, mode=mode)
 
     @staticmethod
-    def key_converter(key: int, mode: int):
+    def key_converter(key: int, mode: int) -> Tuple[int, int]:
         offset = 9 if mode == 1 else 3
         if key + offset > 11:
             offset -= 12
@@ -35,7 +38,7 @@ class Tonality:
         new_mode = 0 if mode == 1 else 1
         return new_key, new_mode
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"{self.__class__.__name__}"
             f"(key={self.key}, mode={self.mode}, "
@@ -43,7 +46,7 @@ class Tonality:
         )
 
 
-def chromatic_chords(mode):
+def chromatic_chords(mode: int) -> List[Tonality]:
     return [Tonality(key=n, mode=mode) for n in range(12)]
 
 
