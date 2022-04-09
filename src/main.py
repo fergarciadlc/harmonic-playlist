@@ -32,6 +32,7 @@ def display_header() -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug", dest="debug", action="store_true", required=False)
+    parser.add_argument("--track_id", dest="track_id", default="", required=False)
     args = parser.parse_args()
 
     log_level = logging.DEBUG if args.debug else logging.INFO
@@ -39,7 +40,7 @@ def main() -> None:
 
     auth_token = get_env_variable(ENV_TOKEN)
     client = Client(auth_token=auth_token)
-    ref_track_id = "7EZC6E7UjZe63f1jRmkWxt"
+    ref_track_id = args.track_id if args.track_id else "7EZC6E7UjZe63f1jRmkWxt"
 
     ref_track = Track.from_track_id(ref_track_id, client)
     display_header()
