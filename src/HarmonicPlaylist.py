@@ -20,16 +20,13 @@ class HarmonicPlaylist:
     reference_track: Track
     tracks: List[Track] = field(default_factory=list)
 
-    def get_song_recommendations(self, limit: int = 100) -> None:
-        query_params = {
-            "seed_tracks": self.reference_track.id,
-            "limit": limit,
-        }
-        data = self._get_api_recommendations(query_params)
-        for d in data["tracks"]:
-            self.tracks.append(Track.from_spotify_track_object(d))
-
     def generate(self, hard_filter: bool = True) -> None:
+        """Generate sequence of tracks based on tonality from reference track.
+
+        Args:
+            hard_filter (bool, optional): If True, will filter only tracks 
+                with same tonality or relative. Defaults to True.
+        """
         # TODO: Refactor this
         natural_tracks = self._get_recommendations_by_tone(kind="natural")
         natural_tracks = self._batch_audio_features_for_tracks(natural_tracks)
@@ -43,6 +40,11 @@ class HarmonicPlaylist:
         self.tracks.insert(0, self.reference_track)
 
     def export_playlist(self, user: User) -> None:
+        """Export playlist into user's profile.
+
+        Args:
+            user (User): Generic user class
+        """
         playlist_id = self._create_playlist(
             user=user,
             description=(
@@ -55,6 +57,14 @@ class HarmonicPlaylist:
         logging.info(f"{len(self.tracks)} tracks exported to playlist")
 
     def _add_tracks_to_playlist(self, playlist_id: str, position: int = 0) -> None:
+        """Add tracks to playlist
+
+        Args:
+            playlist_id (str): Playlist id.
+            position (int, optional): The position to insert the items, a zero-based index 
+                For example, to insert the items in the first position: position=0; 
+                to insert the items in the third position: position=2. Defaults to 0.
+        """
         url = url_add_items_to_playlist.format(playlist_id=playlist_id)
         json_body = {"position": position, "uris": [track.uri for track in self.tracks]}
         self.client.post_json_request(url=url, json_body=json_body)
@@ -67,6 +77,19 @@ class HarmonicPlaylist:
         collaborative: bool = False,
         description: str = "Harmonic playlist to match tonality",
     ) -> str:
+        """Create new playlist in current user's profile.
+
+        Args:
+            user (User): Generic user class
+            name (str, optional): Name of the playlist. Defaults to "".
+            public (bool, optional): Set playlist to public. Defaults to True.
+            collaborative (bool, optional): Set collaborative playlist. Defaults to False.
+            description (str, optional): Playlist's description. 
+                Defaults to "Harmonic playlist to match tonality".
+
+        Returns:
+            str: Created playlist id.
+        """
         default_name = f"Harmonic Playlist: {self.reference_track.name}"
         logging.info("Creating new playlist")
         if not name:
@@ -92,6 +115,17 @@ class HarmonicPlaylist:
     def _get_recommendations_by_tone(
         self, kind: str = "natural", limit: int = 100
     ) -> List[Track]:
+        """Get recommendations by reference track's tonality.
+
+        Args:
+            kind (str, optional): Type of tonality "natural" or "relative". 
+                Defaults to "natural".
+            limit (int, optional): Number of tracks to retrieve from API
+                from 1 to 100. Defaults to 100.
+
+        Returns:
+            List[Track]: List of tracks retrieved from API.
+        """
         if not self.reference_track.tonality:
             self.reference_track.get_audio_features()
         assert (
@@ -116,6 +150,17 @@ class HarmonicPlaylist:
         return tracks
 
     def _get_api_recommendations(self, query_params: Dict) -> Dict:
+        """Get recommendations from spotify API
+
+        For further details refer to
+        https://developer.spotify.com/documentation/web-api/reference/#/operations/get-recommendations
+
+        Args:
+            query_params (Dict): Query params for detailed recommendations request
+
+        Returns:
+            Dict: JSON response from API.
+        """
         query_str = urllib.parse.urlencode(query_params)
         url = f"{url_recommendations}?{query_str}"
         data = self.client.get_json_request(url)
@@ -123,6 +168,11 @@ class HarmonicPlaylist:
         return data
 
     def _batch_audio_features_for_tracks(self, tracks: List[Track]) -> List[Track]:
+        """Get audio features for several tracks from API
+
+        Args: tracks (List[Track]): List of tracks to get features. Maximum 100 tracks.
+        Returns:  List[Track]: Input list of tracks with audio features.
+        """
         ids = [track.id for track in tracks]
         ids = urllib.parse.urlencode({"ids": ",".join(ids)})
         url = f"{url_audio_features_several_tracks}?{ids}"
@@ -138,6 +188,12 @@ class HarmonicPlaylist:
         return tracks_with_audio_features
 
     def _filter_by_tone_or_relative(self, tracks: List[Track]) -> List[Track]:
+        """Filter tracks by tonlaity        
+
+        Args: tracks (List[Track]): List of tracks to filter
+        Raises: ValueError: If track has no tonality defined from API.
+        Returns: List[Track]: List of filtered tracks by tonality.
+        """
         filtered_tracks = []
         for track in tracks:
             if not track.tonality:
@@ -152,6 +208,7 @@ class HarmonicPlaylist:
         return filtered_tracks
 
     def preview(self) -> str:
+        """Returns preview of current tracks on playlist."""
         preview_string = []
         for n, track in enumerate(self.tracks):
             preview_string.append(
@@ -160,6 +217,11 @@ class HarmonicPlaylist:
         return "\n".join(preview_string)
 
     def to_dataframe(self):
+        """List of tracks in dataframe format.
+
+        Returns:
+            pd.DataFrame: Current tracks in data frame format.
+        """
         import pandas as pd
         from SpotifyClient.Track import TARGET_AUDIO_FEATURES
 

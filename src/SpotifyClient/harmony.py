@@ -15,11 +15,13 @@ class Tonality:
 
     @property
     def key_signature(self) -> Optional[str]:
+        """Tonality in string format"""
         if self.key == -1 or self.mode is None:
             return None
         return KEYS[self.key] + MODE_MAP[self.mode]
 
     def relative_key(self) -> "Tonality":
+        """Converts current tonality to it's relative key"""
         if self.key == -1 or self.mode is None:
             raise ValueError("No key defined")
         new_key, new_mode = self.key_converter(key=self.key, mode=self.mode)
@@ -31,6 +33,7 @@ class Tonality:
 
     @staticmethod
     def key_converter(key: int, mode: int) -> Tuple[int, int]:
+        """Relative key calculation"""
         offset = 9 if mode == 1 else 3
         if key + offset > 11:
             offset -= 12

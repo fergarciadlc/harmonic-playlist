@@ -39,11 +39,20 @@ class Track:
 
     @property
     def uri(self) -> str:
+        """Spotify URI string"""
         if not self.api_data:
             return f"spotify:track:{self.id}"
         return self.api_data["uri"]
 
     def get_audio_features(self, inplace: bool = True) -> Dict:
+        """Get audio features from track
+
+        Args:
+            inplace (bool, optional): Alter track instance with audio features. Defaults to True.
+
+        Returns:
+            Dict: Audio features.
+        """
         assert self.client is not None, "No client defined"
         url = url_audio_features_for_track + self.id
         audio_features = self.client.get_json_request(url)
@@ -56,12 +65,14 @@ class Track:
 
     @staticmethod
     def _get_track_information(track_id: str, client: Client) -> Dict:
+        """Get tracks information from API."""
         url = url_get_track + track_id
         track_data = client.get_json_request(url)
         return track_data
 
     @classmethod
     def from_track_id(cls, track_id: str, client: Client) -> T:
+        """Create track from track id"""
         track_data = cls._get_track_information(track_id=track_id, client=client)
         return cls(
             id=track_data["id"],
@@ -73,6 +84,7 @@ class Track:
 
     @classmethod
     def from_list_of_ids(cls, track_ids: List[str], client: Client) -> List[T]:
+        """Returns list of tracks from tracks ids"""
         query_params = {"ids": ",".join(track_ids)}
         query_str = urllib.parse.urlencode(query_params)
         url = f"{url_get_several_tracks}?{query_str}"
@@ -89,6 +101,7 @@ class Track:
 
     @classmethod
     def from_spotify_track_object(cls, api_data: Dict) -> T:
+        """Create track from spotify track's data"""
         return cls(
             id=api_data["id"],
             name=api_data["name"],

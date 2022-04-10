@@ -13,6 +13,7 @@ class User:
 
     @classmethod
     def from_api_data(cls, data: dict) -> T:
+        """Create user from spotify data."""
         return cls(
             id=data["id"],
             display_name=data["display_name"],
