@@ -2,6 +2,7 @@ from HarmonicPlaylist import HarmonicPlaylist
 from SpotifyClient.Track import Track
 from SpotifyClient import Client
 from SpotifyClient.User import User
+from SpotifyClient.endpoints import url_get_current_user_profile
 import os
 import logging
 import argparse
@@ -30,6 +31,7 @@ def display_header() -> None:
 
 
 def main() -> None:
+    # Initial Configuration
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug", dest="debug", action="store_true", required=False)
     parser.add_argument("--track_id", dest="track_id", default="", required=False)
@@ -38,23 +40,27 @@ def main() -> None:
     log_level = logging.DEBUG if args.debug else logging.INFO
     logging.getLogger().setLevel(log_level)
 
+    # Auth process
     auth_token = get_env_variable(ENV_TOKEN)
     client = Client(auth_token=auth_token)
-    ref_track_id = args.track_id if args.track_id else "7EZC6E7UjZe63f1jRmkWxt"
+    user = User.from_api_data(client.get_json_request(url_get_current_user_profile))
 
+    # Getting reference track
+    # Default: Zombie by The Cranberries
+    ref_track_id = args.track_id if args.track_id else "7EZC6E7UjZe63f1jRmkWxt"
     ref_track = Track.from_track_id(ref_track_id, client)
+
+    # Initializing process
     display_header()
     print("* * * * * * * * * * * * * * * * * * * *")
     print(f"Reference track: \n{ref_track.name}\nby: {ref_track.artists}")
     print("* * * * * * * * * * * * * * * * * * * *")
     hp = HarmonicPlaylist(client=client, reference_track=ref_track)
     hp.generate(hard_filter=True)
-    # df = hp.to_dataframe()
-    # logging.info(df)
     logging.info("Preview:")
     logging.info("\n" + hp.preview())
-    user = User.from_api_data(client.get_json_request("https://api.spotify.com/v1/me"))
-
+    
+    # Exporting playlist
     hp.export_playlist(user)
     print("Enjoy your new playlist! :)")
 
