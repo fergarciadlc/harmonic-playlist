@@ -1,12 +1,12 @@
 from dataclasses import dataclass, field
-from SpotifyClient.client import Client
+from spotify.client import Client
 from typing import List, Dict, TypeVar
-from SpotifyClient.endpoints import (
+from spotify.endpoints import (
     url_get_track,
     url_get_several_tracks,
     url_audio_features_for_track,
 )
-from SpotifyClient.harmony import Tonality
+from spotify.harmony import Tonality
 import urllib
 
 T = TypeVar("T", bound="parent")
