@@ -1,7 +1,7 @@
 import logging
 import urllib
-from SpotifyClient.Track import Track
-from SpotifyClient.User import User
+from SpotifyClient.track import Track
+from SpotifyClient.user import User
 from SpotifyClient import Client
 from SpotifyClient.endpoints import (
     url_recommendations,
@@ -223,7 +223,7 @@ class HarmonicPlaylist:
             pd.DataFrame: Current tracks in data frame format.
         """
         import pandas as pd
-        from SpotifyClient.Track import TARGET_AUDIO_FEATURES
+        from SpotifyClient.track import TARGET_AUDIO_FEATURES
 
         data = []
         for track in self.tracks:
