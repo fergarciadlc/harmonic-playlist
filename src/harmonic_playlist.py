@@ -2,7 +2,7 @@ import logging
 import urllib
 from SpotifyClient.track import Track
 from SpotifyClient.user import User
-from SpotifyClient import Client
+from SpotifyClient.client import Client
 from SpotifyClient.endpoints import (
     url_recommendations,
     url_audio_features_several_tracks,

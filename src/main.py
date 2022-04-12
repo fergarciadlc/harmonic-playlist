@@ -1,6 +1,6 @@
 from harmonic_playlist import HarmonicPlaylist
 from SpotifyClient.track import Track
-from SpotifyClient import Client
+from SpotifyClient.client import Client
 from SpotifyClient.user import User
 from SpotifyClient.endpoints import url_get_current_user_profile
 import os
