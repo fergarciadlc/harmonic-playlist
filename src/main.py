@@ -1,11 +1,12 @@
-from harmonic_playlist import HarmonicPlaylist
-from spotify.track import Track
-from spotify.client import Client
-from spotify.user import User
-from spotify.endpoints import url_get_current_user_profile
 import os
 import logging
 import argparse
+from harmonic_playlist import HarmonicPlaylist
+from spotify import Track
+from spotify import Client
+from spotify import User
+from spotify.endpoints import url_get_current_user_profile
+
 
 ENV_TOKEN = "SPOTIFY_AUTH_TOKEN"
 

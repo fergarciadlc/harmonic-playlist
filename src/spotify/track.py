@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from spotify.client import Client
+from spotify import Client
 from typing import List, Dict
 from spotify.endpoints import (
     url_get_track,
