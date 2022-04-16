@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from spotify.client import Client
-from typing import List, Dict, TypeVar
+from typing import List, Dict
 from spotify.endpoints import (
     url_get_track,
     url_get_several_tracks,
@@ -9,7 +9,6 @@ from spotify.endpoints import (
 from spotify.harmony import Tonality
 import urllib
 
-T = TypeVar("T", bound="parent")
 
 TARGET_AUDIO_FEATURES = [
     "acousticness",
@@ -71,7 +70,7 @@ class Track:
         return track_data
 
     @classmethod
-    def from_track_id(cls, track_id: str, client: Client) -> T:
+    def from_track_id(cls, track_id: str, client: Client) -> "Track":
         """Create track from track id"""
         track_data = cls._get_track_information(track_id=track_id, client=client)
         return cls(
@@ -83,7 +82,7 @@ class Track:
         )
 
     @classmethod
-    def from_list_of_ids(cls, track_ids: List[str], client: Client) -> List[T]:
+    def from_list_of_ids(cls, track_ids: List[str], client: Client) -> List["Track"]:
         """Returns list of tracks from tracks ids"""
         query_params = {"ids": ",".join(track_ids)}
         query_str = urllib.parse.urlencode(query_params)
@@ -100,7 +99,7 @@ class Track:
         ]
 
     @classmethod
-    def from_spotify_track_object(cls, api_data: Dict) -> T:
+    def from_spotify_track_object(cls, api_data: Dict) -> "Track":
         """Create track from spotify track's data"""
         return cls(
             id=api_data["id"],

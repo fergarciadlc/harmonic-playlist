@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-from typing import Optional, TypeVar, Tuple, List
+from typing import Optional, Tuple, List
 
-T = TypeVar("T", bound="parent")
 
 KEYS = ("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")
 MODES = (0, 1)
@@ -28,7 +27,7 @@ class Tonality:
         return self._from_new_key(key=new_key, mode=new_mode)
 
     @classmethod
-    def _from_new_key(cls, key: int, mode: int) -> T:
+    def _from_new_key(cls, key: int, mode: int):
         return cls(key=key, mode=mode)
 
     @staticmethod
