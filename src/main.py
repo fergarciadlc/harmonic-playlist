@@ -1,12 +1,10 @@
-import os
-import logging
 import argparse
-from harmonic_playlist import HarmonicPlaylist
-from spotify import Track
-from spotify import Client
-from spotify import User
-from spotify.endpoints import url_get_current_user_profile
+import logging
+import os
 
+from harmonic_playlist import HarmonicPlaylist
+from spotify import Client, Track, User
+from spotify.endpoints import url_get_current_user_profile
 
 ENV_TOKEN = "SPOTIFY_AUTH_TOKEN"
 
@@ -21,7 +19,9 @@ def get_env_variable(env_var) -> str:
 
 
 def display_header() -> None:
-    print(r"  _   _                                  _       ______ _             _ _     _   ")
+    print(
+        r"  _   _                                  _       ______ _             _ _     _   "
+    )
     print(r" | | | |                                (_)      | ___ \ |           | (_)   | |  ")
     print(r" | |_| | __ _ _ __ _ __ ___   ___  _ __  _  ___  | |_/ / | __ _ _   _| |_ ___| |_ ")
     print(r" |  _  |/ _` | '__| '_ ` _ \ / _ \| '_ \| |/ __| |  __/| |/ _` | | | | | / __| __|")
@@ -60,7 +60,7 @@ def main() -> None:
     hp.generate(hard_filter=True)
     logging.info("Preview:")
     logging.info("\n" + hp.preview())
-    
+
     # Exporting playlist
     hp.export_playlist(user)
     print("Enjoy your new playlist! :)")

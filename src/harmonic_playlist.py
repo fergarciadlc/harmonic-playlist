@@ -1,17 +1,16 @@
 import logging
 import urllib
-from spotify import Track
-from spotify import User
-from spotify import Client
+from dataclasses import dataclass, field
+from typing import Dict, List
+
+from spotify import Client, Track, User
 from spotify.endpoints import (
-    url_recommendations,
+    url_add_items_to_playlist,
     url_audio_features_several_tracks,
     url_create_playlist,
-    url_add_items_to_playlist,
+    url_recommendations,
 )
 from spotify.harmony import Tonality
-from dataclasses import dataclass, field
-from typing import List, Dict
 
 
 @dataclass
@@ -223,6 +222,7 @@ class HarmonicPlaylist:
             pd.DataFrame: Current tracks in data frame format.
         """
         import pandas as pd
+
         from spotify.track import TARGET_AUDIO_FEATURES
 
         data = []

@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Tuple, List
-
+from typing import List, Optional, Tuple
 
 KEYS = ("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")
 MODES = (0, 1)

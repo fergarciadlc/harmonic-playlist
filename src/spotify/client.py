@@ -1,7 +1,8 @@
-import requests
-import logging
 import json
+import logging
 from typing import Dict
+
+import requests
 
 
 class Client:

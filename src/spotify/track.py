@@ -1,14 +1,14 @@
+import urllib
 from dataclasses import dataclass, field
+from typing import Dict, List
+
 from spotify import Client
-from typing import List, Dict
 from spotify.endpoints import (
-    url_get_track,
-    url_get_several_tracks,
     url_audio_features_for_track,
+    url_get_several_tracks,
+    url_get_track,
 )
 from spotify.harmony import Tonality
-import urllib
-
 
 TARGET_AUDIO_FEATURES = [
     "acousticness",
