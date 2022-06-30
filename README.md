@@ -31,7 +31,9 @@ Run the man script with Python 3.7 or above:
 If the track id is not defined from the cli flag you can manually edit the default track id in `main.py`.
 
 
-### Example Output:
+## Example Output:
+![screenshot](https://user-images.githubusercontent.com/29163881/176597443-70126a90-7232-4397-811b-83ebcdaed06a.png)
+
 ```
 > python src/main.py --track_id 7EZC6E7UjZe63f1jRmkWxt
 
@@ -100,3 +102,4 @@ INFO:root:Playlist name: 'Harmonic Playlist: Zombie
 INFO:root:43 tracks exported to playlist
 INFO:root:Enjoy your new playlist! :)
 ```
+
