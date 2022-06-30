@@ -2,7 +2,7 @@ import argparse
 import logging
 import os
 
-from harmonic_playlist import HarmonicPlaylist
+from harmonic_playlist import HarmonicPlaylist, display_header
 from spotify import Client, Track, User
 from spotify.endpoints import url_get_current_user_profile
 
@@ -16,19 +16,6 @@ def get_env_variable(env_var) -> str:
     except KeyError:
         logging.error(f"Undefined env var: {env_var}")
         raise
-
-
-def display_header() -> None:
-    print(
-        r"  _   _                                  _       ______ _             _ _     _   "
-    )
-    print(r" | | | |                                (_)      | ___ \ |           | (_)   | |  ")
-    print(r" | |_| | __ _ _ __ _ __ ___   ___  _ __  _  ___  | |_/ / | __ _ _   _| |_ ___| |_ ")
-    print(r" |  _  |/ _` | '__| '_ ` _ \ / _ \| '_ \| |/ __| |  __/| |/ _` | | | | | / __| __|")
-    print(r" | | | | (_| | |  | | | | | | (_) | | | | | (__  | |   | | (_| | |_| | | \__ \ |_ ")
-    print(r" \_| |_/\__,_|_|  |_| |_| |_|\___/|_| |_|_|\___| \_|   |_|\__,_|\__, |_|_|___/\__|")
-    print(r"                                                                 __/ |            ")
-    print(r"                                                                |___/             ")
 
 
 def main() -> None:
@@ -53,9 +40,9 @@ def main() -> None:
 
     # Initializing process
     display_header()
-    print("* * * * * * * * * * * * * * * * * * * *")
-    print(f"Reference track: \n{ref_track.name}\nby: {ref_track.artists}")
-    print("* * * * * * * * * * * * * * * * * * * *")
+    logging.info("* * * * * * * * * * * * * * * * * * * *")
+    logging.info(f"Reference track: \n{ref_track.name}\nby: {ref_track.artists}")
+    logging.info("* * * * * * * * * * * * * * * * * * * *")
     hp = HarmonicPlaylist(client=client, reference_track=ref_track)
     hp.generate(hard_filter=True)
     logging.info("Preview:")
@@ -63,7 +50,7 @@ def main() -> None:
 
     # Exporting playlist
     hp.export_playlist(user)
-    print("Enjoy your new playlist! :)")
+    logging.info("Enjoy your new playlist! :)")
 
 
 if __name__ == "__main__":

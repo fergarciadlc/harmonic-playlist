@@ -12,7 +12,6 @@ from spotify.endpoints import (
 )
 from spotify.harmony import Tonality
 
-
 @dataclass
 class HarmonicPlaylist:
     client: Client
@@ -72,7 +71,7 @@ class HarmonicPlaylist:
         self,
         user: User,
         name: str = "",
-        public: bool = True,
+        public: bool = False,
         collaborative: bool = False,
         description: str = "Harmonic playlist to match tonality",
     ) -> str:
@@ -237,3 +236,18 @@ class HarmonicPlaylist:
                 tr[feature] = track.audio_features[feature]
             data.append(tr)
         return pd.DataFrame(data)
+
+
+header = """
+ _   _                                  _       ______ _             _ _     _   
+| | | |                                (_)      | ___ \ |           | (_)   | |  
+| |_| | __ _ _ __ _ __ ___   ___  _ __  _  ___  | |_/ / | __ _ _   _| |_ ___| |_ 
+|  _  |/ _` | '__| '_ ` _ \ / _ \| '_ \| |/ __| |  __/| |/ _` | | | | | / __| __|
+| | | | (_| | |  | | | | | | (_) | | | | | (__  | |   | | (_| | |_| | | \__ \ |_ 
+\_| |_/\__,_|_|  |_| |_| |_|\___/|_| |_|_|\___| \_|   |_|\__,_|\__, |_|_|___/\__|
+                                                                __/ |            
+                                                                |___/             
+"""
+
+def display_header() -> None:
+    print(header)
