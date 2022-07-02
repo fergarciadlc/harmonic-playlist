@@ -54,18 +54,18 @@ class HarmonicPlaylist:
         self._add_tracks_to_playlist(playlist_id=playlist_id)
         logging.info(f"{len(self.tracks)} tracks exported to playlist")
 
-    def _add_tracks_to_playlist(self, playlist_id: str, position: int = 0) -> None:
+    def _add_tracks_to_playlist(self, playlist_id: str, batch_size: int = 100) -> None:
         """Add tracks to playlist
 
         Args:
             playlist_id (str): Playlist id.
-            position (int, optional): The position to insert the items, a zero-based index 
-                For example, to insert the items in the first position: position=0; 
-                to insert the items in the third position: position=2. Defaults to 0.
+            batch_size (int, optional): Number of tracks to export per batch.
+                Spotify's API has a 100 tracks limit per request.
         """
         url = url_add_items_to_playlist.format(playlist_id=playlist_id)
-        json_body = {"position": position, "uris": [track.uri for track in self.tracks]}
-        self.client.post_json_request(url=url, json_body=json_body)
+        for tracks_chunk in chunks(self.tracks, batch_size):        
+            json_body = {"uris": [track.uri for track in tracks_chunk]}
+            self.client.post_json_request(url=url, json_body=json_body)
 
     def _create_playlist(
         self,
@@ -237,6 +237,10 @@ class HarmonicPlaylist:
             data.append(tr)
         return pd.DataFrame(data)
 
+def chunks(lst: List, n: int):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
 
 header = """
  _   _                                  _       ______ _             _ _     _   
