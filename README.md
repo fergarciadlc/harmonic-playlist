@@ -30,6 +30,11 @@ Run the man script with Python 3.7 or above:
 
 If the track id is not defined from the cli flag you can manually edit the default track id in `main.py`.
 
+### Spotify track id
+
+The track id can be obtained from the track's URL, for instance; for the track `https://open.spotify.com/track/7EZC6E7UjZe63f1jRmkWxt?si=edcc89dd30184d06`
+The track id is `7EZC6E7UjZe63f1jRmkWxt`
+
 
 ## Example Output:
 ![screenshot](https://user-images.githubusercontent.com/29163881/176597443-70126a90-7232-4397-811b-83ebcdaed06a.png)
