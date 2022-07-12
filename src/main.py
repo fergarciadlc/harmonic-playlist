@@ -23,6 +23,8 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug", dest="debug", action="store_true", required=False)
     parser.add_argument("--track_id", dest="track_id", default="", required=False)
+    parser.add_argument("--not_filter", dest="not_filter", action="store_true", required=False)
+
     args = parser.parse_args()
 
     log_level = logging.DEBUG if args.debug else logging.INFO
@@ -44,7 +46,7 @@ def main() -> None:
     logging.info(f"Reference track: \n{ref_track.name}\nby: {ref_track.artists}")
     logging.info("* * * * * * * * * * * * * * * * * * * *")
     hp = HarmonicPlaylist(client=client, reference_track=ref_track)
-    hp.generate(hard_filter=True)
+    hp.generate(hard_filter=not args.not_filter) # Default True
     logging.info("Preview:")
     logging.info("\n" + hp.preview())
 
