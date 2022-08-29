@@ -6,6 +6,7 @@ from harmonic_playlist import HarmonicPlaylist, display_header
 from spotify import Client, Track, User
 from spotify.endpoints import url_get_current_user_profile
 
+
 ENV_TOKEN = "SPOTIFY_AUTH_TOKEN"
 
 
